@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tiên Nghịch Auto Tool V1.5</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  min-height:100%;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:#eef4ff;
+  background:#070b1c;
+}
+
+body{
+  overflow-x:hidden;
+}
+
+/* =========================
+   NỀN TIÊN HIỆP TU TIÊN
+========================= */
+.bg{
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  z-index:-10;
+  background:
+    radial-gradient(circle at 50% 20%,rgba(105,135,255,.22),transparent 28%),
+    radial-gradient(circle at 20% 65%,rgba(112,63,205,.18),transparent 32%),
+    linear-gradient(180deg,#080b22 0%,#101735 48%,#080c20 100%);
+}
+
+.moon{
+  position:absolute;
+  width:92px;
+  height:92px;
+  right:12%;
+  top:9%;
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff,#dbe6ff 48%,#91a7e7 100%);
+  box-shadow:
+    0 0 25px rgba(196,215,255,.8),
+    0 0 70px rgba(100,150,255,.45);
+}
+
+.moon:after{
+  content:"";
+  position:absolute;
+  width:18px;
+  height:12px;
+  left:20px;
+  top:27px;
+  border-radius:50%;
+  background:rgba(120,140,190,.16);
+  box-shadow:
+    27px 26px 0 rgba(120,140,190,.12),
+    40px 8px 0 rgba(120,140,190,.10);
+}
+
+.stars{
+  position:absolute;
+  inset:0;
+  background-image:
+    radial-gradient(circle at 8% 15%,#fff 0 1px,transparent 2px),
+    radial-gradient(circle at 18% 32%,#d9e8ff 0 1px,transparent 2px),
+    radial-gradient(circle at 31% 12%,#fff 0 1px,transparent 2px),
+    radial-gradient(circle at 43% 27%,#dce5ff 0 1px,transparent 2px),
+    radial-gradient(circle at 57% 9%,#fff 0 1px,transparent 2px),
+    radial-gradient(circle at 69% 23%,#dce8ff 0 1px,transparent 2px),
+    radial-gradient(circle at 81% 12%,#fff 0 1px,transparent 2px),
+    radial-gradient(circle at 92% 31%,#dce8ff 0 1px,transparent 2px),
+    radial-gradient(circle at 14% 48%,#fff 0 1px,transparent 2px),
+    radial-gradient(circle at 77% 44%,#fff 0 1px,transparent 2px),
+    radial-gradient(circle at 49% 43%,#dce8ff 0 1px,transparent 2px);
+  opacity:.8;
+}
+
+.aura{
+  position:absolute;
+  width:500px;
+  height:260px;
+  left:50%;
+  bottom:18%;
+  transform:translateX(-50%);
+  border-radius:50%;
+  background:radial-gradient(
+    ellipse,
+    rgba(89,150,255,.20),
+    rgba(126,73,225,.10) 40%,
+    transparent 72%
+  );
+  filter:blur(12px);
+}
+
+/* Núi không dùng các đường chéo tạo hình X */
+.mountain{
+  position:absolute;
+  left:-10%;
+  width:120%;
+  bottom:0;
+}
+
+.mountain.back{
+  height:45%;
+  background:#151b38;
+  clip-path:polygon(
+    0 75%,8% 58%,16% 70%,25% 42%,34% 64%,
+    44% 48%,54% 68%,63% 38%,73% 62%,
+    82% 45%,91% 67%,100% 52%,100% 100%,0 100%
+  );
+  opacity:.75;
+}
+
+.mountain.mid{
+  height:34%;
+  background:#0d1430;
+  clip-path:polygon(
+    0 78%,10% 56%,19% 72%,30% 47%,40% 68%,
+    50% 52%,59% 75%,69% 43%,78% 65%,
+    88% 50%,100% 70%,100% 100%,0 100%
+  );
+}
+
+.mountain.front{
+  height:24%;
+  background:#070b20;
+  clip-path:polygon(
+    0 72%,13% 54%,24% 76%,36% 48%,48% 72%,
+    60% 53%,72% 77%,84% 51%,100% 73%,
+    100% 100%,0 100%
+  );
+}
+
+.cloud{
+  position:absolute;
+  width:380px;
+  height:80px;
+  border-radius:50%;
+  background:rgba(180,205,255,.08);
+  filter:blur(18px);
+}
+
+.cloud.c1{left:-100px;top:34%;}
+.cloud.c2{right:-120px;top:48%;transform:scale(1.3);}
+.cloud.c3{left:15%;bottom:27%;transform:scale(.8);}
+
+/* Linh khí */
+.spirit{
+  position:absolute;
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:#9dd7ff;
+  box-shadow:0 0 12px #79c8ff;
+  opacity:.75;
+  animation:float 4s ease-in-out infinite;
+}
+
+.s1{left:18%;bottom:30%;}
+.s2{left:27%;bottom:38%;animation-delay:1s;}
+.s3{left:72%;bottom:34%;animation-delay:2s;}
+.s4{left:82%;bottom:26%;animation-delay:.5s;}
+.s5{left:48%;bottom:25%;animation-delay:1.5s;}
+
+@keyframes float{
+  0%,100%{transform:translateY(0);opacity:.35}
+  50%{transform:translateY(-35px);opacity:1}
+}
+
+/* =========================
+   APP
+========================= */
+.app{
+  width:100%;
+  max-width:560px;
+  margin:auto;
+  min-height:100vh;
+  padding-bottom:90px;
+}
+
+.header{
+  padding:22px 18px 12px;
+}
+
+.logo{
+  font-size:25px;
+  font-weight:800;
+  letter-spacing:.3px;
+  text-shadow:0 0 18px rgba(130,170,255,.6);
+}
+
+.sub{
+  color:#9eadd4;
+  font-size:13px;
+  margin-top:4px;
+}
+
+.card{
+  margin:12px 15px;
+  padding:17px;
+  border-radius:18px;
+  background:rgba(10,17,42,.78);
+  border:1px solid rgba(115,151,255,.25);
+  box-shadow:
+    0 12px 35px rgba(0,0,0,.28),
+    inset 0 1px rgba(255,255,255,.04);
+  backdrop-filter:blur(12px);
+}
+
+h2,h3{
+  margin:0 0 10px;
+}
+
+.title{
+  font-size:20px;
+  font-weight:800;
+}
+
+.muted{
+  color:#9ba9cc;
+  font-size:13px;
+}
+
+.balance{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.balanceBox{
+  padding:14px;
+  border-radius:14px;
+  background:rgba(255,255,255,.045);
+  border:1px solid rgba(130,160,255,.12);
+}
+
+.balanceBox strong{
+  display:block;
+  font-size:21px;
+  margin-top:5px;
+}
+
+input,select{
+  width:100%;
+  padding:13px 14px;
+  margin:6px 0;
+  border-radius:12px;
+  border:1px solid rgba(132,159,226,.28);
+  outline:none;
+  background:#0a1129;
+  color:#fff;
+  font-size:15px;
+}
+
+button{
+  width:100%;
+  border:0;
+  padding:13px 15px;
+  margin-top:8px;
+  border-radius:12px;
+  color:#fff;
+  font-weight:800;
+  font-size:14px;
+  background:linear-gradient(135deg,#456cff,#7448d8);
+  box-shadow:0 7px 20px rgba(73,91,220,.25);
+}
+
+button:active{
+  transform:scale(.98);
+}
+
+button.secondary{
+  background:rgba(255,255,255,.07);
+  box-shadow:none;
+}
+
+button.danger{
+  background:linear-gradient(135deg,#a93662,#6730a1);
+}
+
+.hidden{
+  display:none!important;
+}
+
+.page{
+  display:none;
+}
+
+.page.active{
+  display:block;
+}
+
+/* =========================
+   LOGIN
+========================= */
+.loginWrap{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.loginBox{
+  width:100%;
+  max-width:430px;
+  padding:25px;
+  border-radius:22px;
+  background:rgba(8,14,36,.88);
+  border:1px solid rgba(116,157,255,.3);
+  box-shadow:0 20px 70px rgba(0,0,0,.5);
+  backdrop-filter:blur(18px);
+}
+
+.loginLogo{
+  text-align:center;
+  font-size:29px;
+  font-weight:900;
+  margin-bottom:5px;
+}
+
+.loginSub{
+  text-align:center;
+  color:#9ba9cc;
+  font-size:13px;
+  margin-bottom:20px;
+}
+
+/* =========================
+   AUTO
+========================= */
+.progressOuter{
+  height:12px;
+  border-radius:20px;
+  overflow:hidden;
+  background:#070c20;
+  margin:14px 0;
+}
+
+.progressInner{
+  height:100%;
+  width:0%;
+  border-radius:20px;
+  background:linear-gradient(90deg,#5d8cff,#9c5dff);
+  transition:width .2s;
+}
+
+.status{
+  padding:11px;
+  border-radius:12px;
+  background:rgba(82,124,255,.08);
+  color:#aebde8;
+  font-size:13px;
+}
+
+/* =========================
+   ĐỘ KIẾP
+========================= */
+.towerScene{
+  position:relative;
+  min-height:330px;
+  margin:-2px -2px 15px;
+  border-radius:17px;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 55%,rgba(105,170,255,.20),transparent 20%),
+    linear-gradient(180deg,rgba(31,43,91,.45),rgba(5,9,26,.9));
+  border:1px solid rgba(117,153,255,.18);
+}
+
+/* Vương Lâm ngồi tu luyện */
+.wanglin{
+  position:absolute;
+  left:50%;
+  bottom:52px;
+  transform:translateX(-50%);
+  width:100px;
+  height:130px;
+}
+
+.wanglin .auraRing{
+  position:absolute;
+  left:50%;
+  bottom:5px;
+  transform:translateX(-50%);
+  width:110px;
+  height:32px;
+  border-radius:50%;
+  border:2px solid rgba(112,196,255,.45);
+  box-shadow:
+    0 0 18px rgba(84,165,255,.55),
+    inset 0 0 15px rgba(84,165,255,.2);
+}
+
+.wanglin .body{
+  position:absolute;
+  left:50%;
+  bottom:18px;
+  transform:translateX(-50%);
+  width:55px;
+  height:72px;
+  border-radius:26px 26px 13px 13px;
+  background:linear-gradient(90deg,#202c62,#6479c5,#202c62);
+  box-shadow:0 0 25px rgba(82,137,255,.28);
+}
+
+.wanglin .head{
+  position:absolute;
+  left:50%;
+  top:13px;
+  transform:translateX(-50%);
+  width:30px;
+  height:30px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#f0d2b8,#a97770);
+  box-shadow:0 0 12px rgba(210,190,255,.35);
+}
+
+.wanglin .hair{
+  position:absolute;
+  left:50%;
+  top:7px;
+  transform:translateX(-50%);
+  width:38px;
+  height:29px;
+  border-radius:50% 50% 25% 25%;
+  background:#080b18;
+}
+
+.wanglin .leg1,
+.wanglin .leg2{
+  position:absolute;
+  bottom:3px;
+  width:48px;
+  height:25px;
+  background:#29386e;
+  border-radius:50%;
+}
+
+.wanglin .leg1{left:5px;transform:rotate(15deg);}
+.wanglin .leg2{right:5px;transform:rotate(-15deg);}
+
+.wanglin .energy{
+  position:absolute;
+  left:50%;
+  top:55px;
+  width:7px;
+  height:55px;
+  transform:translateX(-50%);
+  border-radius:50%;
+  background:#9be4ff;
+  box-shadow:
+    0 0 8px #9be4ff,
+    0 0 25px #559dff;
+  animation:energyPulse 1.7s infinite alternate;
+}
+
+@keyframes energyPulse{
+  from{opacity:.35;height:35px}
+  to{opacity:1;height:65px}
+}
+
+.cultivationText{
+  position:absolute;
+  left:50%;
+  bottom:17px;
+  transform:translateX(-50%);
+  white-space:nowrap;
+  font-size:12px;
+  color:#a8c9ff;
+  text-shadow:0 0 12px #4c91ff;
+}
+
+/* Tiên nhân cưỡi kiếm */
+.immortal{
+  position:absolute;
+  width:110px;
+  height:60px;
+}
+
+.immortal.i1{
+  left:4%;
+  top:45px;
+  transform:rotate(-7deg) scale(.82);
+}
+
+.immortal.i2{
+  right:2%;
+  top:105px;
+  transform:rotate(6deg) scale(.75);
+}
+
+.immortal.i3{
+  left:37%;
+  top:23px;
+  transform:rotate(-3deg) scale(.58);
+  opacity:.85;
+}
+
+.person{
+  position:absolute;
+  left:43px;
+  top:3px;
+  width:18px;
+  height:30px;
+  border-radius:9px;
+  background:linear-gradient(#d7dfff,#7184bd);
+}
+
+.person:before{
+  content:"";
+  position:absolute;
+  left:2px;
+  top:-10px;
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  background:#e7c8b3;
+}
+
+.person:after{
+  content:"";
+  position:absolute;
+  left:-10px;
+  top:8px;
+  width:38px;
+  height:5px;
+  border-radius:50%;
+  background:rgba(172,203,255,.8);
+  box-shadow:0 0 10px rgba(102,178,255,.6);
+}
+
+.sword{
+  position:absolute;
+  left:16px;
+  top:40px;
+  width:85px;
+  height:4px;
+  border-radius:5px;
+  transform:rotate(-3deg);
+  background:linear-gradient(90deg,#697aa7,#eaf5ff,#7aaaff);
+  box-shadow:0 0 10px rgba(117,185,255,.85);
+}
+
+.sword:after{
+  content:"";
+  position:absolute;
+  right:-4px;
+  top:-3px;
+  border-left:12px solid #dceeff;
+  border-top:5px solid transparent;
+  border-bottom:5px solid transparent;
+}
+
+.swordTrail{
+  position:absolute;
+  left:3px;
+  top:43px;
+  width:70px;
+  height:2px;
+  background:linear-gradient(90deg,transparent,rgba(103,187,255,.7),transparent);
+  filter:blur(1px);
+}
+
+/* sét */
+.lightning{
+  position:absolute;
+  left:50%;
+  top:-20px;
+  width:3px;
+  height:145px;
+  background:linear-gradient(transparent,#a9d9ff,transparent);
+  opacity:.22;
+  transform:rotate(18deg);
+  filter:blur(1px);
+}
+
+.towerStats{
+  display:grid;
+  gap:9px;
+}
+
+.stat{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:13px;
+  border-radius:12px;
+  background:rgba(255,255,255,.045);
+}
+
+.stat span{
+  color:#9eadd4;
+  font-size:13px;
+}
+
+.stat strong{
+  color:#eaf1ff;
+}
+
+/* =========================
+   GÓI GIỜ
+========================= */
+.package{
+  padding:15px;
+  margin-top:10px;
+  border-radius:15px;
+  background:rgba(255,255,255,.045);
+  border:1px solid rgba(125,156,235,.13);
+}
+
+.packageTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.package h3{
+  margin:0;
+}
+
+.price{
+  color:#b7d4ff;
+  font-weight:800;
+}
+
+.package small{
+  display:block;
+  margin-top:5px;
+  color:#8999c3;
+}
+
+/* =========================
+   TASK
+========================= */
+.task{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:13px;
+  margin-top:9px;
+  border-radius:13px;
+  background:rgba(255,255,255,.045);
+}
+
+.taskIcon{
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(87,125,255,.16);
+  font-size:20px;
+}
+
+.taskInfo{
+  flex:1;
+}
+
+.taskInfo strong{
+  display:block;
+}
+
+.taskInfo small{
+  color:#8999c3;
+}
+
+/* =========================
+   BOTTOM NAV
+========================= */
+.nav{
+  position:fixed;
+  left:50%;
+  bottom:10px;
+  transform:translateX(-50%);
+  width:min(530px,calc(100% - 20px));
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  padding:8px;
+  border-radius:18px;
+  background:rgba(8,13,33,.91);
+  border:1px solid rgba(120,153,235,.25);
+  backdrop-filter:blur(18px);
+  box-shadow:0 12px 35px rgba(0,0,0,.4);
+  z-index:50;
+}
+
+.nav button{
+  margin:0;
+  padding:8px 3px;
+  background:transparent;
+  box-shadow:none;
+  color:#7f8eb4;
+  font-size:11px;
+}
+
+.nav button.active{
+  color:#cbdcff;
+}
+
+.navIcon{
+  display:block;
+  font-size:20px;
+  margin-bottom:2px;
+}
+
+/* modal */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.7);
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  z-index:100;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.modalBox{
+  width:min(560px,100%);
+  padding:20px;
+  border-radius:22px 22px 0 0;
+  background:#0b1230;
+  border:1px solid rgba(126,158,242,.25);
+}
+
+.notice{
+  padding:11px;
+  border-radius:11px;
+  background:rgba(84,132,255,.09);
+  color:#a9b8de;
+  font-size:12px;
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- BACKGROUND -->
+<div class="bg">
+  <div class="stars"></div>
+  <div class="moon"></div>
+  <div class="aura"></div>
+
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
+  <div class="cloud c3"></div>
+
+  <div class="mountain back"></div>
+  <div class="mountain mid"></div>
+  <div class="mountain front"></div>
+
+  <div class="spirit s1"></div>
+  <div class="spirit s2"></div>
+  <div class="spirit s3"></div>
+  <div class="spirit s4"></div>
+  <div class="spirit s5"></div>
+</div>
+
+<!-- LOGIN AUTO TOOL -->
+<div id="authPage" class="loginWrap">
+
+  <div class="loginBox">
+
+    <div class="loginLogo">⚔️ Tiên Nghịch</div>
+    <div class="loginSub">AUTO TOOL V1.5 · Tu Tiên Giới</div>
+
+    <div id="loginForm">
+      <input id="loginUser" placeholder="Tên tài khoản">
+      <input id="loginPass" type="password" placeholder="Mật khẩu">
+
+      <button onclick="login()">ĐĂNG NHẬP AUTO TOOL</button>
+      <button class="secondary" onclick="showRegister()">TẠO TÀI KHOẢN</button>
+    </div>
+
+    <div id="registerForm" class="hidden">
+      <input id="regUser" placeholder="Tên tài khoản">
+      <input id="regPass" type="password" placeholder="Mật khẩu">
+      <input id="regPass2" type="password" placeholder="Nhập lại mật khẩu">
+
+      <button onclick="register()">ĐĂNG KÝ</button>
+      <button class="secondary" onclick="showLogin()">QUAY LẠI ĐĂNG NHẬP</button>
+    </div>
+
+    <div class="notice">
+      Đây là bản demo giao diện. Tài khoản và dữ liệu được lưu cục bộ trên thiết bị.
+    </div>
+
+  </div>
+</div>
+
+<!-- GAME APP -->
+<div id="app" class="app hidden">
+
+  <header class="header">
+    <div class="logo">⚔️ Tiên Nghịch Auto Tool</div>
+    <div class="sub">V1.5 · Hệ thống hỗ trợ nhiệm vụ</div>
+  </header>
+
+  <!-- HOME -->
+  <section id="home" class="page active">
+
+    <div class="card">
+      <div class="title">Xin chào, đạo hữu</div>
+      <div class="muted" id="welcomeUser">Chưa đăng nhập game</div>
+    </div>
+
+    <div class="card">
+      <h3>💠 Tài nguyên Auto</h3>
+
+      <div class="balance">
+
+        <div class="balanceBox">
+          <span class="muted">Tiên Ngọc</span>
+          <strong id="ngocHome">0</strong>
+        </div>
+
+        <div class="balanceBox">
+          <span class="muted">Giờ Auto</span>
+          <strong id="hoursHome">0</strong>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🎮 Kết nối game</h3>
+
+      <input id="gameAccount" placeholder="Tài khoản game">
+      <input id="gamePassword" type="password" placeholder="Mật khẩu game">
+
+      <select id="server">
+        <option value="1">Server 1</option>
+        <option value="2">Server 2</option>
+        <option value="3">Server 3</option>
+        <option value="4">Server 4</option>
+        <option value="5">Server 5</option>
+      </select>
+
+      <button onclick="connectGame()">KẾT NỐI GAME</button>
+
+      <div id="connectionStatus" class="status">
+        Chưa kết nối.
+      </div>
+    </div>
+
+  </section>
+
+  <!-- AUTO -->
+  <section id="auto" class="page">
+
+    <div class="card">
+
+      <h2>🤖 Auto Engine</h2>
+      <div class="muted">Mô phỏng quá trình Auto nhiệm vụ</div>
+
+      <div style="text-align:center;margin:22px 0;">
+        <div style="font-size:38px;font-weight:900;" id="autoPercent">0%</div>
+        <div class="muted">Tiến độ phiên Auto</div>
+      </div>
+
+      <div class="progressOuter">
+        <div id="autoProgress" class="progressInner"></div>
+      </div>
+
+      <div id="autoStatus" class="status">
+        Auto đang chờ bắt đầu.
+      </div>
+
+      <button id="autoButton" onclick="toggleAuto()">
+        BẮT ĐẦU AUTO
+      </button>
+
+    </div>
+
+    <div class="card">
+      <h3>💠 Thời gian còn lại</h3>
+      <div style="font-size:30px;font-weight:900;" id="hoursAuto">0 giờ</div>
+      <div class="muted">Giờ Auto trong tài khoản</div>
+    </div>
+
+  </section>
+
+  <!-- DAILY TASK -->
+  <section id="daily" class="page">
+
+    <div class="card">
+      <h2>📜 Nhiệm vụ hằng ngày</h2>
+      <div class="muted">Danh sách nhiệm vụ Auto mô phỏng</div>
+
+      <div class="task">
+        <div class="taskIcon">⚔️</div>
+        <div class="taskInfo">
+          <strong>Thanh lý nhiệm vụ</strong>
+          <small>Thực hiện nhiệm vụ hằng ngày</small>
+        </div>
+        <button style="width:auto;margin:0;padding:9px 12px;" onclick="completeTask(this)">
+          AUTO
+        </button>
+      </div>
+
+      <div class="task">
+        <div class="taskIcon">💰</div>
+        <div class="taskInfo">
+          <strong>Thu thập phần thưởng</strong>
+          <small>Nhận phần thưởng nhiệm vụ</small>
+        </div>
+        <button style="width:auto;margin:0;padding:9px 12px;" onclick="completeTask(this)">
+          AUTO
+        </button>
+      </div>
+
+      <div class="task">
+        <div class="taskIcon">🏯</div>
+        <div class="taskInfo">
+          <strong>Hoàn thành hoạt động</strong>
+          <small>Hoạt động hằng ngày</small>
+        </div>
+        <button style="width:auto;margin:0;padding:9px 12px;" onclick="completeTask(this)">
+          AUTO
+        </button>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ĐỘ KIẾP -->
+  <section id="tower" class="page">
+
+    <div class="card">
+
+      <h2>⚡ Độ Kiếp</h2>
+      <div class="muted">Phiên vượt tháp · Tiên hiệp tu luyện</div>
+
+      <div class="towerScene">
+
+        <!-- tiên nhân -->
+        <div class="immortal i1">
+          <div class="person"></div>
+          <div class="sword"></div>
+          <div class="swordTrail"></div>
+        </div>
+
+        <div class="immortal i2">
+          <div class="person"></div>
+          <div class="sword"></div>
+          <div class="swordTrail"></div>
+        </div>
+
+        <div class="immortal i3">
+          <div class="person"></div>
+          <div class="sword"></div>
+          <div class="swordTrail"></div>
+        </div>
+
+        <div class="lightning"></div>
+
+        <!-- Vương Lâm -->
+        <div class="wanglin">
+
+          <div class="auraRing"></div>
+
+          <div class="head"></div>
+          <div class="hair"></div>
+
+          <div class="body"></div>
+
+          <div class="leg1"></div>
+          <div class="leg2"></div>
+
+          <div class="energy"></div>
+
+        </div>
+
+        <div class="cultivationText">
+          🧘 Vương Lâm · Ngồi tu luyện · Tụ linh khí
+        </div>
+
+      </div>
+
+      <div class="towerStats">
+
+        <div class="stat">
+          <span>Phiên vượt tháp</span>
+          <strong id="sessionValue">3 / 5</strong>
+        </div>
+
+        <div class="stat">
+          <span>Tiến độ vượt tháp</span>
+          <strong id="towerPercent">60%</strong>
+        </div>
+
+        <div class="stat">
+          <span>Tầng hiện tại</span>
+          <strong id="floorValue">Tầng 28</strong>
+        </div>
+
+      </div>
+
+      <div class="progressOuter">
+        <div id="towerProgress" class="progressInner" style="width:60%"></div>
+      </div>
+
+      <div id="towerStatus" class="status">
+        Vương Lâm đang ngồi tu luyện, chờ đạo hữu bắt đầu phiên vượt tháp.
+      </div>
+
+      <button onclick="startTowerSession()">
+        ⚡ BẮT ĐẦU PHIÊN VƯỢT THÁP
+      </button>
+
+    </div>
+
+  </section>
+
+  <!-- TIME -->
+  <section id="time" class="page">
+
+    <div class="card">
+
+      <h2>⏳ Thời Gian Auto</h2>
+      <div class="muted">
+        1 Tiên Ngọc = 1.000 VNĐ
+      </div>
+
+      <div class="package">
+        <div class="packageTop">
+          <h3>200 giờ</h3>
+          <div class="price">150.000đ</div>
+        </div>
+        <small>150 Tiên Ngọc · 750đ/giờ</small>
+        <button onclick="openPackage(200,150000,150)">MUA GÓI</button>
+      </div>
+
+      <div class="package">
+        <div class="packageTop">
+          <h3>500 giờ</h3>
+          <div class="price">350.000đ</div>
+        </div>
+        <small>350 Tiên Ngọc · 700đ/giờ</small>
+        <button onclick="openPackage(500,350000,350)">MUA GÓI</button>
+      </div>
+
+      <div class="package">
+        <div class="packageTop">
+          <h3>1.000 giờ</h3>
+          <div class="price">650.000đ</div>
+        </div>
+        <small>650 Tiên Ngọc · 650đ/giờ</small>
+        <button onclick="openPackage(1000,650000,650)">MUA GÓI</button>
+      </div>
+
+      <div class="package">
+        <div class="packageTop">
+          <h3>2.000 giờ</h3>
+          <div class="price">1.200.000đ</div>
+        </div>
+        <small>1.200 Tiên Ngọc · 600đ/giờ</small>
+        <button onclick="openPackage(2000,1200000,1200)">MUA GÓI</button>
+      </div>
+
+      <div class="package">
+        <div class="packageTop">
+          <h3>5.000 giờ</h3>
+          <div class="price">2.750.000đ</div>
+        </div>
+        <small>2.750 Tiên Ngọc · 550đ/giờ</small>
+        <button onclick="openPackage(5000,2750000,2750)">MUA GÓI</button>
+      </div>
+
+      <div class="package">
+        <div class="packageTop">
+          <h3>10.000 giờ</h3>
+          <div class="price">5.000.000đ</div>
+        </div>
+        <small>5.000 Tiên Ngọc · 500đ/giờ</small>
+        <button onclick="openPackage(10000,5000000,5000)">MUA GÓI</button>
+      </div>
+
+      <div class="notice">
+        Đây là mô phỏng mua gói. Không có giao dịch tiền thật.
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- NAV -->
+  <nav class="nav">
+
+    <button class="active" onclick="showPage('home',this)">
+      <span class="navIcon">🏠</span>
+      Trang chủ
+    </button>
+
+    <button onclick="showPage('auto',this)">
+      <span class="navIcon">🤖</span>
+      Auto
+    </button>
+
+    <button onclick="showPage('daily',this)">
+      <span class="navIcon">📜</span>
+      Nhiệm vụ
+    </button>
+
+    <button onclick="showPage('tower',this)">
+      <span class="navIcon">⚡</span>
+      Độ kiếp
+    </button>
+
+    <button onclick="showPage('time',this)">
+      <span class="navIcon">⏳</span>
+      Thời gian
+    </button>
+
+  </nav>
+
+</div>
+
+<!-- MODAL MUA GÓI -->
+<div id="packageModal" class="modal">
+
+  <div class="modalBox">
+
+    <h2>💠 Xác nhận gói Auto</h2>
+
+    <div id="packageInfo" class="status"></div>
+
+    <button onclick="confirmPackage()">
+      XÁC NHẬN MUA
+    </button>
+
+    <button class="secondary" onclick="closePackage()">
+      HỦY
+    </button>
+
+  </div>
+
+</div>
+
+<script>
+/* =========================
+   STORAGE
+========================= */
+const ACCOUNT_KEY = "tiennghich_auto_account_v15";
+const BALANCE_KEY = "tiennghich_auto_balance_v15";
+const HOURS_KEY = "tiennghich_auto_hours_v15";
+const GAME_KEY = "tiennghich_game_connection_v15";
+
+let autoRunning = false;
+let autoTimer = null;
+let autoProgressValue = 0;
+
+let towerRunning = false;
+let towerTimer = null;
+
+let selectedPackage = null;
+
+/* =========================
+   AUTH
+========================= */
+function showRegister(){
+  document.getElementById("loginForm").classList.add("hidden");
+  document.getElementById("registerForm").classList.remove("hidden");
+}
+
+function showLogin(){
+  document.getElementById("registerForm").classList.add("hidden");
+  document.getElementById("loginForm").classList.remove("hidden");
+}
+
+function register(){
+
+  const user = document.getElementById("regUser").value.trim();
+  const pass = document.getElementById("regPass").value;
+  const pass2 = document.getElementById("regPass2").value;
+
+  if(!user || !pass){
+    alert("Vui lòng nhập tài khoản và mật khẩu.");
+    return;
+  }
+
+  if(pass !== pass2){
+    alert("Mật khẩu nhập lại không khớp.");
+    return;
+  }
+
+  const account = {
+    username:user,
+    password:pass
+  };
+
+  localStorage.setItem(ACCOUNT_KEY,JSON.stringify(account));
+
+  if(localStorage.getItem(BALANCE_KEY) === null){
+    localStorage.setItem(BALANCE_KEY,"0");
+  }
+
+  if(localStorage.getItem(HOURS_KEY) === null){
+    localStorage.setItem(HOURS_KEY,"0");
+  }
+
+  alert("Đăng ký thành công.");
+  showLogin();
+}
+
+function login(){
+
+  const user = document.getElementById("loginUser").value.trim();
+  const pass = document.getElementById("loginPass").value;
+
+  const saved = JSON.parse(localStorage.getItem(ACCOUNT_KEY) || "null");
+
+  if(!saved){
+    alert("Chưa có tài khoản. Hãy đăng ký trước.");
+    return;
+  }
+
+  if(user !== saved.username || pass !== saved.password){
+    alert("Sai tài khoản hoặc mật khẩu.");
+    return;
+  }
+
+  document.getElementById("authPage").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+
+  document.getElementById("welcomeUser").textContent =
+    "Đạo hữu: " + saved.username;
+
+  updateBalances();
+  loadGameConnection();
+}
+
+/* =========================
+   BALANCE
+========================= */
+function getBalance(){
+  return Number(localStorage.getItem(BALANCE_KEY) || 0);
+}
+
+function getHours(){
+  return Number(localStorage.getItem(HOURS_KEY) || 0);
+}
+
+function setBalance(value){
+  localStorage.setItem(BALANCE_KEY,String(Math.max(0,value)));
+}
+
+function setHours(value){
+  localStorage.setItem(HOURS_KEY,String(Math.max(0,value)));
+}
+
+function updateBalances(){
+
+  const ngoc = getBalance();
+  const hours = getHours();
+
+  document.getElementById("ngocHome").textContent =
+    ngoc.toLocaleString("vi-VN");
+
+  document.getElementById("hoursHome").textContent =
+    hours.toLocaleString("vi-VN");
+
+  document.getElementById("hoursAuto").textContent =
+    hours.toLocaleString("vi-VN") + " giờ";
+}
+
+/* =========================
+   GAME CONNECTION
+========================= */
+function connectGame(){
+
+  const account = document.getElementById("gameAccount").value.trim();
+  const password = document.getElementById("gamePassword").value;
+  const server = document.getElementById("server").value;
+  const status = document.getElementById("connectionStatus");
+
+  if(!account || !password){
+    status.textContent = "Vui lòng nhập tài khoản và mật khẩu game.";
+    return;
+  }
+
+  status.textContent = "Đang kết nối Server " + server + "...";
+
+  setTimeout(()=>{
+
+    localStorage.setItem(GAME_KEY,JSON.stringify({
+      account:account,
+      server:server,
+      connected:true
+    }));
+
+    status.textContent =
+      "✅ Đã kết nối mô phỏng Server " + server + ".";
+
+  },1200);
+}
+
+function loadGameConnection(){
+
+  const data = JSON.parse(localStorage.getItem(GAME_KEY) || "null");
+
+  if(!data) return;
+
+  document.getElementById("gameAccount").value = data.account || "";
+  document.getElementById("server").value = data.server || "1";
+
+  document.getElementById("connectionStatus").textContent =
+    "✅ Đã kết nối mô phỏng Server " + data.server + ".";
+}
+
+/* =========================
+   NAVIGATION
+========================= */
+function showPage(id,button){
+
+  document.querySelectorAll(".page").forEach(p=>{
+    p.classList.remove("active");
+  });
+
+  document.getElementById(id).classList.add("active");
+
+  document.querySelectorAll(".nav button").forEach(b=>{
+    b.classList.remove("active");
+  });
+
+  if(button){
+    button.classList.add("active");
+  }
+
+  window.scrollTo(0,0);
+}
+
+/* =========================
+   AUTO ENGINE
+========================= */
+function toggleAuto(){
+
+  if(autoRunning){
+    stopAuto();
+  }else{
+    startAuto();
+  }
+}
+
+function startAuto(){
+
+  if(getHours() <= 0){
+    alert("Bạn chưa có giờ Auto. Hãy mua gói thời gian trước.");
+    return;
+  }
+
+  autoRunning = true;
+
+  document.getElementById("autoButton").textContent =
+    "DỪNG AUTO";
+
+  document.getElementById("autoStatus").textContent =
+    "🤖 Auto đang thực hiện nhiệm vụ...";
+
+  autoTimer = setInterval(()=>{
+
+    if(!autoRunning) return;
+
+    autoProgressValue += 5;
+
+    if(autoProgressValue > 100){
+      autoProgressValue = 100;
+    }
+
+    document.getElementById("autoPercent").textContent =
+      autoProgressValue + "%";
+
+    document.getElementById("autoProgress").style.width =
+      autoProgressValue + "%";
+
+    if(autoProgressValue >= 100){
+
+      let hours = getHours();
+
+      if(hours > 0){
+        hours--;
+        setHours(hours);
+        updateBalances();
+
+        document.getElementById("autoStatus").textContent =
+          "✅ Hoàn thành một phiên Auto. Đã trừ 1 giờ.";
+      }
+
+      autoProgressValue = 0;
+
+      document.getElementById("autoPercent").textContent = "0%";
+      document.getElementById("autoProgress").style.width = "0%";
+
+      if(getHours() <= 0){
+        stopAuto();
+        document.getElementById("autoStatus").textContent =
+          "⏳ Đã hết giờ Auto.";
+      }
+    }
+
+  },700);
+}
+
+function stopAuto(){
+
+  autoRunning = false;
+
+  if(autoTimer){
+    clearInterval(autoTimer);
+    autoTimer = null;
+  }
+
+  document.getElementById("autoButton").textContent =
+    "BẮT ĐẦU AUTO";
+
+  document.getElementById("autoStatus").textContent =
+    "Auto đã dừng.";
+}
+
+/* =========================
+   DAILY TASK
+========================= */
+function completeTask(button){
+
+  if(getHours() <= 0){
+    alert("Không đủ giờ Auto.");
+    return;
+  }
+
+  button.textContent = "✓";
+  button.disabled = true;
+
+  setTimeout(()=>{
+    button.textContent = "ĐÃ XONG";
+  },500);
+}
+
+/* =========================
+   TOWER / ĐỘ KIẾP
+========================= */
+function startTowerSession(){
+
+  if(towerRunning){
+    return;
+  }
+
+  towerRunning = true;
+
+  let progress = 60;
+  let floor = 28;
+  let session = 3;
+
+  document.getElementById("towerStatus").textContent =
+    "⚡ Vương Lâm bắt đầu vận chuyển linh lực. Tiên nhân cưỡi kiếm đang tiến vào thiên môn...";
+
+  towerTimer = setInterval(()=>{
+
+    progress += 5;
+
+    if(progress >= 100){
+
+      progress = 0;
+      floor++;
+
+      if(floor > 50){
+        floor = 50;
+      }
+
+      session++;
+
+      if(session > 5){
+        session = 5;
+      }
+
+      document.getElementById("towerStatus").textContent =
+        "🌌 Vượt qua một tầng. Linh khí hội tụ quanh Vương Lâm.";
+    }
+
+    document.getElementById("towerPercent").textContent =
+      progress + "%";
+
+    document.getElementById("towerProgress").style.width =
+      progress + "%";
+
+    document.getElementById("floorValue").textContent =
+      "Tầng " + floor;
+
+    document.getElementById("sessionValue").textContent =
+      session + " / 5";
+
+    if(session >= 5 && floor >= 50){
+
+      clearInterval(towerTimer);
+      towerTimer = null;
+      towerRunning = false;
+
+      document.getElementById("towerStatus").textContent =
+        "🏆 Hoàn thành phiên vượt tháp mô phỏng.";
+    }
+
+  },650);
+}
+
+/* =========================
+   PACKAGE
+========================= */
+function openPackage(hours,price,ngoc){
+
+  selectedPackage = {
+    hours:hours,
+    price:price,
+    ngoc:ngoc
+  };
+
+  document.getElementById("packageInfo").innerHTML =
+    "Gói <b>" + hours.toLocaleString("vi-VN") +
+    " giờ</b><br><br>" +
+    "Giá: <b>" + price.toLocaleString("vi-VN") +
+    "đ</b><br>" +
+    "Tiên Ngọc: <b>" + ngoc.toLocaleString("vi-VN") +
+    "</b>";
+
+  document.getElementById("packageModal").classList.add("show");
+}
+
+function closePackage(){
+
+  selectedPackage = null;
+
+  document.getElementById("packageModal").classList.remove("show");
+}
+
+function confirmPackage(){
+
+  if(!selectedPackage){
+    return;
+  }
+
+  /*
+    Đây chỉ là mô phỏng.
+    Không phát sinh giao dịch tiền thật.
+  */
+
+  setBalance(
+    getBalance() + selectedPackage.ngoc
+  );
+
+  setHours(
+    getHours() + selectedPackage.hours
+  );
+
+  updateBalances();
+
+  alert(
+    "✅ Mua gói mô phỏng thành công!\n\n" +
+    "+" + selectedPackage.ngoc.toLocaleString("vi-VN") +
+    " Tiên Ngọc\n" +
+    "+" + selectedPackage.hours.toLocaleString("vi-VN") +
+    " giờ Auto"
+  );
+
+  closePackage();
+}
+
+/* =========================
+   INIT
+========================= */
+(function init(){
+
+  if(localStorage.getItem(BALANCE_KEY) === null){
+    localStorage.setItem(BALANCE_KEY,"0");
+  }
+
+  if(localStorage.getItem(HOURS_KEY) === null){
+    localStorage.setItem(HOURS_KEY,"0");
+  }
+
+})();
+</script>
+
+</body>
+</html>
